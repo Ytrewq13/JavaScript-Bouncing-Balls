@@ -58,10 +58,10 @@ function Particle(x, y) {
   }
   this.getCollision = function() {
     if (this.pos[0] + this.radius >= width) {
-      this.vel[0] = -0.9 * Math.abs(this.vel[0]);
+      this.vel[0] = -(Math.random() * 0.2 + 0.9) * Math.abs(this.vel[0]);
     }
     if (this.pos[0] - this.radius <= 0) {
-      this.vel[0] = 0.9 * Math.abs(this.vel[0]);
+      this.vel[0] = (Math.random() * 0.2 + 0.9) * Math.abs(this.vel[0]);
     }
     if (this.pos[1] + this.radius >= height) {
       this.vel[1] = -(Math.random() * 0.2 + 0.9) * Math.abs(this.vel[1]);

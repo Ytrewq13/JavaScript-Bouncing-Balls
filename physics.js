@@ -44,10 +44,10 @@ function Particle(x, y) {
     this.acc[1] += accel[1];
   }
   this.update = function() {
-    this.vel[0] += this.acc[0];
-    this.vel[1] += this.acc[1];
     this.pos[0] += this.vel[0];
     this.pos[1] += this.vel[1];
+    this.vel[0] += this.acc[0];
+    this.vel[1] += this.acc[1];
     this.acc = [0, 0];
   }
   this.display = function() {
@@ -64,8 +64,8 @@ function Particle(x, y) {
       this.vel[0] = 0.9 * Math.abs(this.vel[0]);
     }
     if (this.pos[1] + this.radius >= height) {
-      this.vel[1] = -Math.abs(this.vel[1]);
-    } else if (this.pos[1] - this.radius <= 0) {
+      this.vel[1] = -(Math.random() * 0.1 + 0.7) * Math.abs(this.vel[1]);
+    } else if (this.pos[1] - this.radius <= 0 && this.vel[1] < 0) {
       this.vel[1] = 0;
     }
   }
@@ -101,13 +101,6 @@ function animate() {
     parts[i].update();
   }
   show(parts);
-  frameNum++;
-  if (frameNum >= maxFrames) {
-    frameNum = 0;
-    parts = [];
-    setTimeout(generate, 10);
-  }
-  document.getElementById("textout").innerHTML = "Frames remaining: " + (maxFrames - frameNum);
   setTimeout(animate, 20);
 }
 
@@ -118,7 +111,7 @@ function keyPressed(event) {
   }
   if (event.keyCode == 38) {
     console.log("Up arrow pressed.");
-    applyAccels(parts, [0, -1]);
+    applyForces(parts, [0, -1500]);
   }
   if (event.keyCode == 39) {
     console.log("Right arrow pressed.");
@@ -126,12 +119,10 @@ function keyPressed(event) {
   }
   if (event.keyCode == 40) {
     console.log("Down arrow pressed.");
-    applyForces(parts, [0, 50]);
+    applyForces(parts, [0, 250]);
   }
 }
 
-var frameNum = 0;
-var maxFrames = 1500;
 var parts = [];
 var numParts = 128;
 function generate() {

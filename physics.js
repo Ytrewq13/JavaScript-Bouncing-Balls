@@ -7,11 +7,18 @@ var col_aqua = "0,255,255,";
 var col_magenta = "255,0,255,";
 var col_yellow = "255,255,0,";
 var canvas = document.querySelector("canvas");
+var body = document.body;
+var html = document.documentElement;
+var height = Math.min( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
+canvas.width = screen.width;
+canvas.height = height;
 var context = canvas.getContext("2d");
 var width = canvas.getAttribute("width");
 var height = canvas.getAttribute("height");
+var animationFrameTime = 20;
 
-var gravity = [0, 0.2];
+
+var gravity = [0, 0.1];
 
 
 function randomColor() {
@@ -23,15 +30,23 @@ function randomColor() {
   return colStr;
 }
 
+function randomHue() {
+  var colStr = "hsl(";
+  colStr += Math.ceil(Math.random() * 360);
+  colStr += ", 50%, 50%)";
+  return colStr;
+}
+
 // Function to create a Particle.
 function Particle(x, y) {
   this.pos = [x, y];
   this.vel = [0, 0];
   this.acc = [0, 0];
-  this.radius = Math.floor(Math.random() * 15 + 5);
+  this.radius = Math.floor(Math.random() * width/50 + width/150);
   this.color = randomColor();
-  this.vel[0] = Math.ceil(Math.random() * 8 - 4);
-  this.vel[1] = Math.ceil(Math.random() * 8 - 4);
+  this.hueCol = randomHue();
+  this.vel[0] = Math.ceil(Math.random() * 4 - 2);
+  this.vel[1] = Math.ceil(Math.random() * 4 - 2);
 
   this.mass = Math.PI * this.radius * this.radius;
 
@@ -51,10 +66,17 @@ function Particle(x, y) {
     this.acc = [0, 0];
   }
   this.display = function() {
+    hue = Math.floor(this.pos[0]/width*360)
+    //hue -= Math.floor(this.pos[1]/height*360)
+    hue *= 2;
+    this.hueCol = "hsl("+hue+",50%,50%)"
     context.beginPath();
-    context.arc(this.pos[0],this.pos[1],this.radius,0,2*Math.PI);
-    context.fillStyle = "rgba(" + this.color + "0.25" + ")";
+    context.arc(this.pos[0],this.pos[1],this.radius,0,2*Math.PI,true);
+    context.fillStyle = this.hueCol;
+    context.strokeStyle = "white";
+    context.lineWidth = 3;
     context.fill();
+    //context.stroke()
   }
   this.getCollision = function() {
     if (this.pos[0] + this.radius >= width) {
@@ -101,7 +123,7 @@ function animate() {
     parts[i].update();
   }
   show(parts);
-  setTimeout(animate, 20);
+  setTimeout(animate, animationFrameTime);
 }
 
 function keyPressed(event) {
@@ -134,4 +156,4 @@ function generate() {
   }
 }
 generate();
-setTimeout(animate, 20);
+setTimeout(animate, animationFrameTime);
